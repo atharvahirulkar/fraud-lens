@@ -1,0 +1,185 @@
+# FraudLens analyst eval set.
+#
+# Each case is graded against the live BigQuery tables: `ground_truth_sql` runs
+# at eval time and its result is compared with the numbers / names / dates in
+# the agent's answer. `expected_skill` is not graded for pass/fail; it feeds the
+# routing-accuracy metric.
+#
+# Windows below assume today = reference_date (2026-10-14):
+#   yesterday      2026-10-13
+#   last week      2026-10-07 .. 2026-10-13
+#   week before    2026-09-30 .. 2026-10-06
+#   last 2 weeks   2026-09-30 .. 2026-10-13
+#   last 30 days   2026-09-14 .. 2026-10-13
+#
+# check types:
+#   number   - scalar; `format`: count | pct (fraction shown as %) | usd | score
+#   numbers  - every value in the first row must appear (same formats)
+#   top_k    - SQL returns (name, value) sorted desc; the first k candidate names
+#              mentioned must be a valid top-k (ties allowed)
+#   date     - scalar DATE; ISO or "Oct 9" / "October 9" accepted
+#   text     - scalar string must appear (case-insensitive)
+
+reference_date: "2026-10-14"
+high_risk_score: 0.20
+
+cases:
+  - id: kpi_txn_count_last_week
+    question: How many transactions were scored last week?
+    expected_skill: fraud-kpis
+    check: {type: number, format: count}
+    ground_truth_sql: |
+      SELECT COUNT(*) FROM fraudlens.scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13'
+
+  - id: kpi_fraud_rate_last_week
+    question: What was the fraud rate last week?
+    expected_skill: fraud-kpis
+    check: {type: numbers, format: pct}
+    ground_truth_sql: |
+      SELECT SAFE_DIVIDE(COUNTIF(is_fraud), COUNT(*)) AS flag_rate,
+             SAFE_DIVIDE(COUNTIF(fraud_score >= 0.20), COUNT(*)) AS high_risk_rate
+      FROM fraudlens.scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13'
+
+  - id: kpi_high_risk_rate_yesterday
+    question: What share of yesterday's transactions were high-risk?
+    expected_skill: fraud-kpis
+    check: {type: number, format: pct}
+    ground_truth_sql: |
+      SELECT SAFE_DIVIDE(COUNTIF(fraud_score >= 0.20), COUNT(*))
+      FROM fraudlens.scored WHERE dt = '2026-10-13'
+
+  - id: kpi_avg_score_last_week
+    question: What was the average fraud score last week?
+    expected_skill: fraud-kpis
+    check: {type: number, format: score}
+    ground_truth_sql: |
+      SELECT AVG(fraud_score) FROM fraudlens.scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13'
+
+  - id: kpi_high_risk_amount_last_week
+    question: How many dollars went through high-risk transactions last week?
+    expected_skill: fraud-kpis
+    check: {type: number, format: usd}
+    ground_truth_sql: |
+      SELECT SUM(transaction_amt) FROM fraudlens.scored
+      WHERE dt BETWEEN '2026-10-07' AND '2026-10-13' AND fraud_score >= 0.20
+
+  - id: kpi_worst_day_two_weeks
+    question: Which day in the last two weeks had the highest high-risk rate?
+    expected_skill: fraud-kpis
+    check: {type: date}
+    ground_truth_sql: |
+      SELECT dt FROM fraudlens.scored WHERE dt BETWEEN '2026-09-30' AND '2026-10-13'
+      GROUP BY dt ORDER BY SAFE_DIVIDE(COUNTIF(fraud_score >= 0.20), COUNT(*)) DESC LIMIT 1
+
+  - id: kpi_week_over_week
+    question: How did the high-risk rate last week compare with the week before?
+    expected_skill: fraud-kpis
+    check: {type: numbers, format: pct}
+    ground_truth_sql: |
+      SELECT
+        SAFE_DIVIDE(COUNTIF(dt >= '2026-10-07' AND fraud_score >= 0.20), COUNTIF(dt >= '2026-10-07')) AS last_week,
+        SAFE_DIVIDE(COUNTIF(dt <= '2026-10-06' AND fraud_score >= 0.20), COUNTIF(dt <= '2026-10-06')) AS week_before
+      FROM fraudlens.scored WHERE dt BETWEEN '2026-09-30' AND '2026-10-13'
+
+  - id: kpi_max_score_30d
+    question: What was the highest fraud score we saw in the last 30 days?
+    expected_skill: fraud-kpis
+    check: {type: number, format: score}
+    ground_truth_sql: |
+      SELECT MAX(fraud_score) FROM fraudlens.scored WHERE dt BETWEEN '2026-09-14' AND '2026-10-13'
+
+  - id: seg_top_merchant_30d
+    question: Which merchant had the most high-risk transactions in the last 30 days?
+    expected_skill: risk-segments
+    check: {type: top_k, k: 1}
+    ground_truth_sql: |
+      SELECT merchant, COUNTIF(fraud_score >= 0.20) AS v FROM fraudlens.scored
+      WHERE dt BETWEEN '2026-09-14' AND '2026-10-13' GROUP BY merchant ORDER BY v DESC
+
+  - id: seg_top3_flagged_merchants_last_week
+    question: What were the top 3 flagged merchants last week?
+    expected_skill: risk-segments
+    check: {type: top_k, k: 3}
+    ground_truth_sql: |
+      SELECT merchant, COUNTIF(fraud_score >= 0.20) AS v FROM fraudlens.scored
+      WHERE dt BETWEEN '2026-10-07' AND '2026-10-13' GROUP BY merchant ORDER BY v DESC
+
+  - id: seg_category_avg_score_two_weeks
+    question: Which merchant category had the highest average fraud score over the last 2 weeks?
+    expected_skill: risk-segments
+    check: {type: top_k, k: 1}
+    ground_truth_sql: |
+      SELECT merchant_category, AVG(fraud_score) AS v FROM fraudlens.scored
+      WHERE dt BETWEEN '2026-09-30' AND '2026-10-13' GROUP BY merchant_category ORDER BY v DESC
+
+  - id: seg_credit_vs_debit_30d
+    question: Compare the high-risk rate for credit versus debit cards over the last 30 days.
+    expected_skill: risk-segments
+    check: {type: numbers, format: pct}
+    ground_truth_sql: |
+      SELECT
+        SAFE_DIVIDE(COUNTIF(card_type = 'credit' AND fraud_score >= 0.20), COUNTIF(card_type = 'credit')) AS credit,
+        SAFE_DIVIDE(COUNTIF(card_type = 'debit' AND fraud_score >= 0.20), COUNTIF(card_type = 'debit')) AS debit
+      FROM fraudlens.scored WHERE dt BETWEEN '2026-09-14' AND '2026-10-13'
+
+  - id: seg_email_domain_min_volume
+    question: Among payer email domains with at least 100 transactions in the last 30 days, which has the highest high-risk rate?
+    expected_skill: risk-segments
+    check: {type: top_k, k: 1}
+    ground_truth_sql: |
+      SELECT p_emaildomain, SAFE_DIVIDE(COUNTIF(fraud_score >= 0.20), COUNT(*)) AS v FROM fraudlens.scored
+      WHERE dt BETWEEN '2026-09-14' AND '2026-10-13' GROUP BY p_emaildomain HAVING COUNT(*) >= 100 ORDER BY v DESC
+
+  - id: seg_product_last_week
+    question: Which product code had the most high-risk transactions last week?
+    expected_skill: risk-segments
+    check: {type: top_k, k: 1}
+    ground_truth_sql: |
+      SELECT product_cd, COUNTIF(fraud_score >= 0.20) AS v FROM fraudlens.scored
+      WHERE dt BETWEEN '2026-10-07' AND '2026-10-13' GROUP BY product_cd ORDER BY v DESC
+
+  - id: sql_distinct_merchants_last_week
+    question: How many different merchants had transactions last week?
+    expected_skill: ad-hoc-sql
+    check: {type: number, format: count}
+    ground_truth_sql: |
+      SELECT COUNT(DISTINCT merchant) FROM fraudlens.scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13'
+
+  - id: sql_merchant_on_day
+    question: How many high-risk transactions did GiftCard Hub have on October 12?
+    expected_skill: ad-hoc-sql
+    check: {type: number, format: count}
+    ground_truth_sql: |
+      SELECT COUNTIF(fraud_score >= 0.20) FROM fraudlens.scored
+      WHERE dt = '2026-10-12' AND merchant = 'GiftCard Hub'
+
+  - id: sql_over_1000_last_week
+    question: How many transactions over $1,000 were there last week?
+    expected_skill: ad-hoc-sql
+    check: {type: number, format: count}
+    ground_truth_sql: |
+      SELECT COUNT(*) FROM fraudlens.scored
+      WHERE dt BETWEEN '2026-10-07' AND '2026-10-13' AND transaction_amt > 1000
+
+  - id: sql_protonmail_share_30d
+    question: What percentage of high-risk transactions in the last 30 days came from protonmail.com payers?
+    expected_skill: ad-hoc-sql
+    check: {type: number, format: pct}
+    ground_truth_sql: |
+      SELECT SAFE_DIVIDE(COUNTIF(p_emaildomain = 'protonmail.com'), COUNT(*)) FROM fraudlens.scored
+      WHERE dt BETWEEN '2026-09-14' AND '2026-10-13' AND fraud_score >= 0.20
+
+  - id: sql_model_version_yesterday
+    question: Which model version scored yesterday's transactions?
+    expected_skill: ad-hoc-sql
+    check: {type: text}
+    ground_truth_sql: |
+      SELECT STRING_AGG(DISTINCT model_version) FROM fraudlens.scored WHERE dt = '2026-10-13'
+
+  - id: sql_avg_amount_merchant_last_week
+    question: What was the average transaction amount at LuxeTime Watches last week?
+    expected_skill: ad-hoc-sql
+    check: {type: number, format: usd}
+    ground_truth_sql: |
+      SELECT AVG(transaction_amt) FROM fraudlens.scored
+      WHERE dt BETWEEN '2026-10-07' AND '2026-10-13' AND merchant = 'LuxeTime Watches'

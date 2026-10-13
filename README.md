@@ -1,9 +1,8 @@
 # FraudLens
 
 > Production ML system for real-time fraud detection with explainable AI.  
-> IEEE-CIS · XGBoost · MLflow · FastAPI · GCP Cloud Run · BigQuery · Airflow · SHAP + RAG (GPT-4o-mini)
+> IEEE-CIS · XGBoost · MLflow · FastAPI · GCP Cloud Run · BigQuery · Airflow · SHAP + RAG (GPT-4o-mini) · ADK analyst agent (Gemini)
 >
-> **v2:** GCP port of [FraudLens v1 (AWS)](https://github.com/atharvahirulkar/fraudlens).
 
 ![Status](https://img.shields.io/badge/status-live-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.11-blue)
@@ -105,6 +104,7 @@ BigQuery over GCS parquet         ← fraud trend analysis, reporting
 | Embeddings | sentence-transformers (all-MiniLM-L6-v2) |
 | LLM (explanation) | OpenAI GPT-4o-mini (prod) / Ollama Mistral (local dev) |
 | Orchestration | Apache Airflow (Compute Engine VM) |
+| Analyst agent | Google ADK 2.12 + Agent Skills, Gemini 2.5 Flash on Vertex AI |
 | CI/CD | GitHub Actions + Workload Identity Federation |
 | Language | Python 3.11 |
 
@@ -144,8 +144,12 @@ fraud-lens/
 ├── infra/
 │   ├── setup-gcp.sh             # One-time GCP bootstrap (Cloud Run, WIF, IAM, BigQuery)
 │   └── airflow-vm/              # Compute Engine Airflow: create-vm.sh, startup.sh, compose
+├── agent/
+│   ├── fraudlens_agent/         # ADK analyst agent: agent.py, tools.py, skills/*/SKILL.md
+│   └── evals/                   # fraud_qa.yaml (20 Qs + SQL ground truth), run_evals.py
 ├── scripts/
-│   └── make_sample_batch.py     # Synthetic batch → gs://…/incoming/
+│   ├── make_sample_batch.py     # Synthetic merchant traffic → gs://…/incoming/
+│   └── promote_model.py         # Register a run's model and move it to Production
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
@@ -271,7 +275,53 @@ GCS: gs://<bucket>/scored/dt=YYYY-MM-DD/
 BigQuery: fraudlens.daily_summary (fraud rate · p95 score · flagged amount)
 ```
 
-BigQuery reads the Parquet files in GCS directly (hive partitioning on `dt`), so there's no load step for raw results. The DAG upserts one row per day into a native `daily_summary` table.
+BigQuery reads the Parquet files in GCS directly (hive partitioning on `dt`), so there's no load step for raw results. The DAG upserts one row per day into a native `daily_summary` table. Scored rows keep the model inputs plus `merchant` / `merchant_category` for analytics; failed API calls are retried, and at most 2 runs execute at once (Cloud Run is capped at 2 instances).
+
+**Demo data is synthetic.** `scripts/make_sample_batch.py` generates daily traffic for 12 made-up merchants, each with its own amount, product, card and email-domain profile. The table currently holds 22 days (2026-09-22 → 2026-10-13, 7,762 transactions), backfilled through the real DAG and scored by the live API.
+
+---
+
+## Analyst Agent (ADK + Gemini)
+
+`agent/` is a Google ADK agent that answers plain-English questions over the BigQuery tables ("fraud rate last week?", "top flagged merchants?") using Gemini 2.5 Flash on Vertex AI.
+
+```
+question ─► Gemini ─► load_skill(<skill>) ─► skill's tool ─► BigQuery ─► answer with numbers + date window
+```
+
+It is built from three [Agent Skills](https://agentskills.io) (`agent/fraudlens_agent/skills/*/SKILL.md`). Each skill carries the playbook for one kind of question and unlocks exactly one tool (`adk_additional_tools`), so a BigQuery tool is only declared to the model after the matching skill is loaded:
+
+| Skill | Tool | Answers |
+|---|---|---|
+| `fraud-kpis` | `get_fraud_metrics` | counts, flag rate, high-risk rate, amounts, daily trend, period-over-period |
+| `risk-segments` | `top_segments` | rank merchants / categories / email domains / card types / products by risk |
+| `ad-hoc-sql` | `run_readonly_sql` | anything else: one `SELECT`, dry-run checked to read only `fraudlens.scored` / `daily_summary`, 1 GB / 100-row caps |
+
+**Definitions the agent uses.** "Flagged" / "fraud rate" = the model's own decision (`is_fraud`, threshold 0.744). Because `/predict` receives 7 of the model's 259 features, served scores are compressed and flags are rare (1 of 7,762 so far), so the agent also reports a **high-risk band** (`fraud_score >= 0.20`, 6.8% of traffic) and ranks "top flagged merchants" by it. Relative dates ("last week" = the 7 days ending yesterday) are spelled out in the system instruction, and every answer states its window.
+
+### Evals
+
+`agent/evals/fraud_qa.yaml` holds 20 questions across the three skills. Each has a **ground-truth SQL query that runs against BigQuery at eval time**, and the answer is graded by type: counts exact, percentages / dollars / scores within rounding, dates in any common format, ranked lists in order (ties allowed). The runner also records which skill was loaded (routing accuracy) and every tool call.
+
+Results (Gemini 2.5 Flash, temperature 0, "today" pinned to 2026-10-14):
+
+| Run | Answer accuracy | Skill routing | Mean latency |
+|---|---|---|---|
+| 20 questions × 1 | **20/20 (100%)** | 18/20 (90%) | 8.6 s |
+| 20 questions × 3 (consistency) | **59/60 (98.3%)** | 56/60 (93.3%) | 8.7 s |
+
+The one failed run was a Vertex AI `429 RESOURCE_EXHAUSTED`, not a wrong answer; the agent now retries 429/5xx with backoff. The consistent routing miss is "highest fraud score in the last 30 days", which the agent answers correctly through `ad-hoc-sql` instead of `fraud-kpis`.
+
+```bash
+cd agent
+python -m venv .venv && .venv/bin/pip install -r requirements.txt
+cp fraudlens_agent/.env.example fraudlens_agent/.env      # set GOOGLE_CLOUD_PROJECT
+gcloud auth application-default login
+
+.venv/bin/adk web .                                        # chat UI at http://localhost:8000
+.venv/bin/python -m evals.run_evals [--repeat 3]           # eval set → evals/results/*.json
+.venv/bin/python -m pytest evals/test_grading.py           # grader unit tests
+```
 
 ---
 

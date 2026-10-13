@@ -21,6 +21,8 @@ from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from airflow.decorators import dag, task
 from airflow.exceptions import AirflowSkipException
 from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
@@ -37,6 +39,8 @@ SCORED_PREFIX = "scored"
 
 REQUIRED_COLS = ["transaction_amt", "product_cd"]
 OPTIONAL_COLS = ["card_type", "addr1", "dist1", "p_emaildomain", "r_emaildomain"]
+# Not model inputs; copied from the batch into the scored output for analytics
+PASSTHROUGH_COLS = ["merchant", "merchant_category"]
 
 default_args = {
     "owner": "fraudlens-ml",
@@ -71,6 +75,9 @@ def _clean(value):
     schedule="0 2 * * *",
     start_date=datetime(2026, 1, 1),
     catchup=False,
+    # Cloud Run runs at most 2 instances; more parallel runs (e.g. a backfill)
+    # overload it and rows fail to score
+    max_active_runs=2,
     default_args=default_args,
     tags=["fraudlens", "ml-pipeline", "batch", "gcp"],
 )
@@ -112,6 +119,10 @@ def fraudlens_daily_scoring():
 
         print(f"[Score] Scoring {len(df)} transactions via {API_ENDPOINT}/predict")
         session = requests.Session()
+        # Retry transient errors (scale-up 500s, 429s) instead of dropping the row
+        retry = Retry(total=4, backoff_factor=1.0, status_forcelist=[429, 500, 502, 503, 504],
+                      allowed_methods=["GET", "POST"])
+        session.mount("https://", HTTPAdapter(max_retries=retry))
         # Wake the Cloud Run service (scale-to-zero) before the loop
         session.get(f"{API_ENDPOINT}/health", timeout=60).raise_for_status()
 
@@ -124,8 +135,8 @@ def fraudlens_daily_scoring():
                 pred = resp.json()
                 results.append({
                     "transaction_id": str(row["transaction_id"]),
-                    "transaction_amt": payload["transaction_amt"],
-                    "product_cd": payload["product_cd"],
+                    **payload,
+                    **{c: _clean(row.get(c)) for c in PASSTHROUGH_COLS},
                     "fraud_score": pred["fraud_score"],
                     "is_fraud": pred["is_fraud"],
                     "model_version": pred["model_version"],
@@ -158,13 +169,14 @@ def fraudlens_daily_scoring():
     @task
     def bigquery_refresh(_scored_object: str, ds: str = None) -> None:
         """
-        Ensure the hive-partitioned external table exists (schema inferred from
-        the parquet files), then upsert today's row into daily_summary.
+        (Re)create the hive-partitioned external table (schema inferred from
+        the parquet files, so new output columns appear), then upsert today's
+        row into daily_summary.
         """
         table = f"`{GCP_PROJECT_ID}.{BQ_DATASET}.scored`"
         summary = f"`{GCP_PROJECT_ID}.{BQ_DATASET}.daily_summary`"
         sql = f"""
-        CREATE EXTERNAL TABLE IF NOT EXISTS {table}
+        CREATE OR REPLACE EXTERNAL TABLE {table}
         WITH PARTITION COLUMNS
         OPTIONS (
           format = 'PARQUET',
