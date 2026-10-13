@@ -399,6 +399,7 @@ bq query --nouse_legacy_sql \
 | Cloud Run (scale to zero) | ~$0 to $2 (free tier: 2M requests, 180k vCPU-s) |
 | Airflow VM e2-medium + 20 GB disk | ~$27 running; ~$2 stopped |
 | GCS / Artifact Registry / BigQuery | < $1 at this scale |
+| Vertex AI Gemini 2.5 Flash (analyst agent) | pay per token, only when the agent or evals run |
 
 Stop the VM when you're not using it: `gcloud compute instances stop fraudlens-airflow --zone us-central1-a`.
 
@@ -495,6 +496,8 @@ Inference is CPU-bound and runs inside an `async` endpoint, so one instance effe
 - [x] Airflow DAG on Compute Engine - daily batch scoring → GCS + BigQuery (`dags/daily_scoring.py`)
 - [x] GitHub Actions CI/CD via Workload Identity Federation - push to main auto-deploys to Cloud Run (`deploy.yml`)
 - [x] CPU-only torch build (image much smaller than v1's ~3.7 GB)
+- [x] ADK analyst agent over BigQuery - 3 Agent Skills, Gemini on Vertex AI (`agent/`)
+- [x] Agent eval set - 20 questions graded against live BigQuery SQL (`agent/evals/`)
 
 ---
 
