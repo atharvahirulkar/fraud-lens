@@ -51,7 +51,7 @@ services:
       retries: 3
 
   # - Ollama (Optional: Local LLM)
-  # Uncomment to use local Mistral instead of Claude Haiku
+  # Uncomment to use local Mistral instead of OpenAI GPT-4o-mini
   # ollama:
   #   image: ollama/ollama:latest
   #   container_name: fraudlens-ollama

@@ -113,7 +113,7 @@ BigQuery over GCS parquet         ← fraud trend analysis, reporting
 ## Project Structure
 
 ```
-fraudlens/
+fraud-lens/
 ├── data/
 │   ├── raw/                     # Kaggle CSVs (gitignored)
 │   ├── processed/               # Feature-engineered parquet files
@@ -246,7 +246,7 @@ LLM prompt:
 Natural language explanation (2–3 sentences)
 ```
 
-**Fraud pattern knowledge base** (`data/fraud_patterns/`): ~50 curated JSON documents describing common IEEE-CIS fraud patterns, each with feature signatures, typical SHAP driver profiles, and plain-English descriptions. Embedded at startup and indexed in Qdrant.
+**Fraud pattern knowledge base** (`data/fraud_patterns/`): 51 curated JSON documents describing common IEEE-CIS fraud patterns, each with feature signatures, typical SHAP driver profiles, and plain-English descriptions. Indexed in Qdrant locally; on Cloud Run (no Qdrant) the same docs are embedded at startup into an in-memory numpy index.
 
 **LLM config:**
 - Dev: Ollama (Mistral 7B, fully local, zero cost)
@@ -277,18 +277,18 @@ BigQuery reads the Parquet files in GCS directly (hive partitioning on `dt`), so
 
 ## Experiment Tracking
 
-Both models are evaluated across multiple hyperparameter configurations in MLflow:
+`train.py` defines 12 XGBoost + 12 LightGBM configurations; the committed tracking store currently holds 5 XGBoost runs (best: `xgb-deep`, AUC-PR 0.833). Each run logs:
 
 | Logged artifact | Description |
 |---|---|
 | `auc_roc` | Standard ranking metric |
 | `auc_pr` | Primary metric (imbalanced data) |
-| `f1_score` | At optimal threshold |
-| `feature_importance` | SHAP summary plot |
-| `confusion_matrix` | At 0.5 + optimal threshold |
-| `model` | Serialized artifact |
+| `f1`, `best_threshold` | F1 at the tuned threshold |
+| `shap_summary.png` | SHAP summary plot |
+| `confusion_matrix_05.png`, `confusion_matrix_opt.png` | At 0.5 + optimal threshold |
+| `model`, `pipeline/pipeline.pkl` | Native model + fitted feature pipeline |
 
-Best run by AUC-PR is promoted to `production` in the MLflow model registry. `predictor.py` loads this at API startup - no hardcoded paths.
+The registry version in the `Production` stage is what the API serves; `predictor.py` loads it at startup and reads metrics + the feature pipeline from the run that trained it (no hardcoded paths). Production currently points at `xgb-shallow` (AUC-PR 0.688), not the best run.
 
 ---
 

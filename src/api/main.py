@@ -143,8 +143,7 @@ def _generate_explanation(
     Generate a natural language explanation.
 
     Placeholder: Returns a template explanation.
-    In Phase 4, this will call the LLM (Claude Haiku or Ollama Mistral)
-    with SHAP + retrieved fraud pattern context.
+    /explain uses the full SHAP + RAG + LLM path (GPT-4o-mini or Ollama Mistral).
     """
     if fraud_score > 0.7:
         return (

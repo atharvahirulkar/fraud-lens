@@ -50,6 +50,10 @@ def _make_mock_predictor() -> MagicMock:
     }
 
     mock.get_pipeline.side_effect = RuntimeError("Feature pipeline not loaded")
+    # main._request_to_dataframe only runs the feature pipeline when one is loaded;
+    # a MagicMock attribute would be truthy and transform() into an empty frame.
+    mock.pipeline = None
+    mock.native_model = None
 
     return mock
 
