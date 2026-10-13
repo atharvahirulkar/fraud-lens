@@ -176,10 +176,10 @@ fraud-lens/
 
 // Response
 {
-  "fraud_score": 0.0658,
+  "fraud_score": 0.0164,
   "is_fraud": false,
-  "model_version": "xgboost-v2",
-  "latency_ms": 200.7,
+  "model_version": "xgboost-v3",
+  "latency_ms": 205.1,
   "explanation": "This transaction appears legitimate. Features align with historical patterns for this cardholder. Low fraud risk."
 }
 ```
@@ -188,7 +188,7 @@ fraud-lens/
 
 ```json
 // Request - same schema as /predict
-// Response
+// Response (captured from the previous registry version, v2)
 {
   "fraud_score": 0.0658,
   "shap_values": [
@@ -210,13 +210,13 @@ fraud-lens/
 ```json
 {
   "model_name": "fraudlens-detector",
-  "version": "2",
+  "version": "3",
   "algorithm": "xgboost",
-  "auc_pr": 0.688,
-  "auc_roc": 0.951,
-  "registered_at": "2026-04-22T07:48:36",
+  "auc_pr": 0.833,
+  "auc_roc": 0.973,
+  "registered_at": "2026-10-13T21:53:21",
   "features_count": 259,
-  "optimal_threshold": 0.872
+  "optimal_threshold": 0.744
 }
 ```
 
@@ -288,7 +288,7 @@ BigQuery reads the Parquet files in GCS directly (hive partitioning on `dt`), so
 | `confusion_matrix_05.png`, `confusion_matrix_opt.png` | At 0.5 + optimal threshold |
 | `model`, `pipeline/pipeline.pkl` | Native model + fitted feature pipeline |
 
-The registry version in the `Production` stage is what the API serves; `predictor.py` loads it at startup and reads metrics + the feature pipeline from the run that trained it (no hardcoded paths). Production currently points at `xgb-shallow` (AUC-PR 0.688), not the best run.
+The registry version in the `Production` stage is what the API serves; `predictor.py` loads it at startup and reads metrics + the feature pipeline from the run that trained it (no hardcoded paths). Production is v3 = `xgb-deep`, the best run by AUC-PR (0.833); promote another run with `python scripts/promote_model.py --run-name <name>`, sync `mlruns/` to GCS, then run the deploy workflow. v1/v2 are archived bootstrap versions with placeholder metrics.
 
 ---
 
@@ -407,18 +407,18 @@ curl http://localhost:8000/health
 
 ## Performance (measured)
 
-Measured 2026-10-13 on Cloud Run (us-central1, 1 vCPU / 2 GiB, max 2 instances), `POST /predict`, warm instance:
+Measured 2026-10-13 on Cloud Run (us-central1, 1 vCPU / 2 GiB, max 2 instances), `POST /predict`, warm instance, model v3 (`xgb-deep`) unless noted:
 
 | Metric | Target | Measured |
 |---|---|---|
-| p50 latency, server-side (Cloud Monitoring, 1 client, 500 req) | — | **160 ms** |
-| p95 latency, server-side | — | **215 ms** |
-| p99 latency, server-side | < 80 ms | **468 ms** ✗ |
-| p99 latency, client-side incl. network (keep-alive) | — | 553 ms |
-| p99 under 10 concurrent clients (1,000 req) | — | 2.1 s, ~11 req/s, 9 HTTP 500s while scaling |
-| `/explain` (SHAP + retrieval + GPT-4o-mini) | < 2 s | ~16 s ✗ |
-| AUC-PR / AUC-ROC (deployed model) | > 0.88 / > 0.92 | 0.688 / 0.951 |
-| Airflow DAG run (200 txns, GCS → API → BigQuery) | < 5 min | ~60 s |
+| p50 latency, server-side (Cloud Monitoring, 1 client, 300 req) | — | **178 ms** |
+| p95 latency, server-side | — | **228 ms** |
+| p99 latency, server-side | < 80 ms | **450 ms** ✗ |
+| p99 latency, client-side incl. network (keep-alive) | — | 567 ms |
+| p99 under 10 concurrent clients (1,000 req, model v2) | — | 2.1 s, ~11 req/s, 9 HTTP 500s while scaling |
+| `/explain` (SHAP + retrieval + GPT-4o-mini, model v2) | < 2 s | ~16 s ✗ |
+| AUC-PR / AUC-ROC (deployed model) | > 0.88 / > 0.92 | 0.833 / 0.973 |
+| Airflow DAG run (200 txns, GCS → API → BigQuery, model v2) | < 5 min | ~60 s |
 
 Inference is CPU-bound and runs inside an `async` endpoint, so one instance effectively serves one request at a time. Cold starts after scale-to-zero add ~10-20 s.
 
