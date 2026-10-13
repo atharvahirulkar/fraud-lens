@@ -69,15 +69,19 @@ gcloud artifacts repositories describe "$AR_REPO" --location "$REGION" >/dev/nul
        --description "FraudLens container images"
 
 # Keep only the 5 most recent images so storage stays inside the free 0.5 GB
-gcloud artifacts repositories set-cleanup-policies "$AR_REPO" \
-  --location "$REGION" \
-  --policy=<(cat <<'JSON'
+# (temp file, not <(heredoc): macOS bash 3.2 mangles heredocs in process substitution)
+CLEANUP_POLICY=$(mktemp)
+cat > "$CLEANUP_POLICY" <<'JSON'
 [
   {"name": "keep-recent", "action": {"type": "Keep"}, "mostRecentVersions": {"keepCount": 5}},
   {"name": "delete-old",  "action": {"type": "Delete"}, "condition": {"tagState": "ANY"}}
 ]
 JSON
-) --no-dry-run >/dev/null
+gcloud artifacts repositories set-cleanup-policies "$AR_REPO" \
+  --location "$REGION" \
+  --policy="$CLEANUP_POLICY" \
+  --no-dry-run >/dev/null
+rm -f "$CLEANUP_POLICY"
 
 # ── 3. GCS bucket ───────────────────────────────────────────────────────────
 echo ""
@@ -111,11 +115,16 @@ create_sa fraudlens-airflow  "FraudLens Airflow VM"
 echo ""
 echo "→ Secret: $SECRET"
 if ! gcloud secrets describe "$SECRET" >/dev/null 2>&1; then
+  # Fall back to OPENAI_API_KEY in .env (only that key is read; the placeholder is ignored)
+  if [ -z "${OPENAI_API_KEY:-}" ] && [ -f .env ]; then
+    OPENAI_API_KEY=$(sed -n 's/^OPENAI_API_KEY=//p' .env | tail -1 | tr -d '"'"'"' \r')
+    [ "$OPENAI_API_KEY" = "sk-..." ] && OPENAI_API_KEY=""
+  fi
   if [ -z "${OPENAI_API_KEY:-}" ]; then
     read -r -s -p "  Paste your OpenAI API key (input hidden): " OPENAI_API_KEY; echo
   fi
   printf '%s' "$OPENAI_API_KEY" | gcloud secrets create "$SECRET" \
-    --replication-policy automatic --data-file=-
+    --replication-policy user-managed --locations "$REGION" --data-file=-
 else
   echo "  (already exists — rotate with: printf 'sk-...' | gcloud secrets versions add $SECRET --data-file=-)"
 fi
