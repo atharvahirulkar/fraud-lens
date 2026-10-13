@@ -1,7 +1,7 @@
 # FraudLens
 
 > Production ML system for real-time fraud detection with explainable AI.  
-> IEEE-CIS · XGBoost · LightGBM · MLflow · FastAPI · GCP Cloud Run · BigQuery · Qdrant · Airflow
+> IEEE-CIS · XGBoost · MLflow · FastAPI · GCP Cloud Run · BigQuery · Airflow · SHAP + RAG (GPT-4o-mini)
 >
 > **v2:** GCP port of [FraudLens v1 (AWS)](https://github.com/atharvahirulkar/fraudlens).
 
@@ -9,16 +9,35 @@
 ![Python](https://img.shields.io/badge/python-3.11-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-**Live API:** `https://fraudlens-api-<hash>-uc.a.run.app` (printed by `infra/setup-gcp.sh`)  
-`/health` · `/predict` · `/explain` · `/model/info` · `/docs`
+**Live API:** https://fraudlens-api-h67tu74tma-uc.a.run.app  
+[`/health`](https://fraudlens-api-h67tu74tma-uc.a.run.app/health) · `/predict` · `/explain` · [`/model/info`](https://fraudlens-api-h67tu74tma-uc.a.run.app/model/info) · [`/docs`](https://fraudlens-api-h67tu74tma-uc.a.run.app/docs)  
+*Scales to zero, so the first request after idle takes ~10-20 s.*
 
 ---
 
 ## What this is
 
-FraudLens is a production-grade ML system that trains, tracks, and serves a fraud detection model - and explains every prediction using a RAG-powered explanation engine. XGBoost and LightGBM are compared across 20+ MLflow experiment runs on the IEEE-CIS Fraud Detection dataset. The best model by AUC-PR is registered in the MLflow model registry, containerized, and deployed to Google Cloud Run. A Qdrant-backed RAG layer retrieves fraud pattern context and generates natural language explanations for each flagged transaction using GPT-4o-mini. A daily Airflow DAG scores new batches and writes results to Cloud Storage + BigQuery.
+FraudLens is a production-grade ML system that trains, tracks, and serves a fraud detection model - and explains every prediction using a RAG-powered explanation engine. XGBoost configurations are tracked as MLflow experiment runs on the IEEE-CIS Fraud Detection dataset (the training code also supports LightGBM). A registered model is containerized and deployed to Google Cloud Run. A RAG layer (Qdrant locally, an in-memory index on Cloud Run) retrieves fraud pattern context and GPT-4o-mini turns SHAP drivers + retrieved patterns into a natural language explanation. A daily Airflow DAG scores new batches and writes results to Cloud Storage + BigQuery.
 
 The focus is the full production loop: reproducible training, experiment tracking, cloud deployment, explainability, and orchestrated batch inference.
+
+---
+
+## Why v2 is a GCP port
+
+[v1](https://github.com/atharvahirulkar/fraudlens) ran on AWS: ECS Fargate behind an Application Load Balancer, S3 + Athena for batch results, ECR for images. Fargate tasks and the ALB bill around the clock whether or not anyone calls the API, so the v1 API had to be paused to control cost and there was no live demo.
+
+v2 moves the inference stack to GCP so it can stay live:
+
+| Concern | v1 (AWS) | v2 (GCP) | Why it changed |
+|---|---|---|---|
+| Inference API | ECS Fargate + ALB | Cloud Run | Scales to zero and HTTPS is built in, so an idle demo costs ~$0 |
+| Images | ECR | Artifact Registry | Cleanup policy keeps the last 5 images inside the free tier |
+| Batch results | S3 + Athena | Cloud Storage + BigQuery | Like-for-like: BigQuery external table over GCS Parquet, as Athena was over S3 |
+| CI/CD | GitHub Actions OIDC → AWS role | GitHub Actions → Workload Identity Federation | Same keyless pattern, ported |
+| Orchestration | Airflow | Airflow on a Compute Engine VM | Same DAG, swapped S3/Athena hooks for GCS/BigQuery; UI only via IAP tunnel |
+
+The model, feature pipeline, SHAP explainer and RAG code are unchanged from v1.
 
 ---
 
@@ -35,8 +54,8 @@ Feature Engineering               ← Pandas, Scikit-learn
         │
         ▼
 MLflow Experiment Tracking
-· XGBoost runs  (N hyperparameter configs)
-· LightGBM runs (N hyperparameter configs)
+· XGBoost runs (baseline, shallow, deep, slow-lr configs)
+· LightGBM supported by train.py
 · Logged: AUC-ROC, AUC-PR, F1, SHAP values
         │
         ▼
@@ -52,10 +71,10 @@ FastAPI Inference Service
         ├── GCP Cloud Run         ← containerized, HTTPS, scales to zero
         │
         ▼
-Qdrant Vector Store               ← fraud pattern knowledge base
+Qdrant Vector Store               ← fraud pattern knowledge base (local; in-memory index on Cloud Run)
 · 384-dim embeddings (all-MiniLM-L6-v2)
 · Retrieves top-K relevant fraud patterns
-· LLM (Claude Haiku / Ollama Mistral) generates explanation
+· LLM (GPT-4o-mini / Ollama Mistral locally) generates explanation
         │
         ▼
 Airflow DAG (daily batch)
@@ -74,7 +93,7 @@ BigQuery over GCS parquet         ← fraud trend analysis, reporting
 | Layer | Technology |
 |---|---|
 | Dataset | IEEE-CIS Fraud Detection (Kaggle) |
-| Models | XGBoost, LightGBM |
+| Models | XGBoost (LightGBM supported in training code) |
 | Experiment tracking | MLflow |
 | API framework | FastAPI + Uvicorn |
 | Data validation | Pydantic v2 |
@@ -82,7 +101,7 @@ BigQuery over GCS parquet         ← fraud trend analysis, reporting
 | Cloud deployment | GCP Cloud Run + Artifact Registry |
 | Batch storage | Cloud Storage + BigQuery |
 | Secrets | Secret Manager |
-| Vector store | Qdrant |
+| Vector store | Qdrant (local) · in-memory fallback on Cloud Run |
 | Embeddings | sentence-transformers (all-MiniLM-L6-v2) |
 | LLM (explanation) | OpenAI GPT-4o-mini (prod) / Ollama Mistral (local dev) |
 | Orchestration | Apache Airflow (Compute Engine VM) |
@@ -157,11 +176,11 @@ fraudlens/
 
 // Response
 {
-  "fraud_score": 0.83,
-  "is_fraud": true,
-  "model_version": "lightgbm-v2",
-  "latency_ms": 14.2,
-  "explanation": "This transaction was flagged primarily due to a mismatched recipient email domain (anonymous.com) combined with an above-average transaction amount. These features match patterns associated with card-not-present fraud where the billing and shipping email domains differ. SHAP top drivers: r_emaildomain (+0.31), transaction_amt (+0.18), dist1 (+0.09)."
+  "fraud_score": 0.0658,
+  "is_fraud": false,
+  "model_version": "xgboost-v2",
+  "latency_ms": 200.7,
+  "explanation": "This transaction appears legitimate. Features align with historical patterns for this cardholder. Low fraud risk."
 }
 ```
 
@@ -171,14 +190,16 @@ fraudlens/
 // Request - same schema as /predict
 // Response
 {
-  "shap_values": {
-    "r_emaildomain": 0.31,
-    "transaction_amt": 0.18,
-    "dist1": 0.09
-  },
+  "fraud_score": 0.0658,
+  "shap_values": [
+    {"feature": "R_emaildomain_te", "shap_value": -0.672},
+    {"feature": "card1_txn_count",  "shap_value": -0.596},
+    {"feature": "card1_te",         "shap_value": -0.409}
+  ],
   "retrieved_patterns": [
-    "card-not-present email mismatch",
-    "high-value CNP transaction"
+    "New Card: Immediate High-Value Transactions",
+    "Card Usage Spike: C-Features Exceed Threshold",
+    "Card Testing: Low-Value Transaction on New Card"
   ],
   "explanation": "..."
 }
@@ -190,10 +211,12 @@ fraudlens/
 {
   "model_name": "fraudlens-detector",
   "version": "2",
-  "algorithm": "LightGBM",
-  "auc_pr": 0.91,
-  "auc_roc": 0.93,
-  "registered_at": "2026-05-15T10:00:00Z"
+  "algorithm": "xgboost",
+  "auc_pr": 0.688,
+  "auc_roc": 0.951,
+  "registered_at": "2026-04-22T07:48:36",
+  "features_count": 259,
+  "optimal_threshold": 0.872
 }
 ```
 
@@ -291,7 +314,7 @@ gcloud config set project <PROJECT_ID>
 
 # APIs, Artifact Registry, bucket, service accounts, secret, IAM, BigQuery,
 # Workload Identity Federation, first image build, Cloud Run deploy
-GITHUB_ORG=atharvahirulkar GITHUB_REPO=fraudlens-v2 bash infra/setup-gcp.sh
+GITHUB_ORG=atharvahirulkar GITHUB_REPO=fraud-lens bash infra/setup-gcp.sh
 
 # Airflow VM (pulls DAGs from GCS every 2 min)
 bash infra/airflow-vm/create-vm.sh
@@ -337,8 +360,8 @@ Stop the VM when you're not using it: `gcloud compute instances stop fraudlens-a
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/atharvahirulkar/fraudlens-v2.git
-cd fraudlens-v2
+git clone https://github.com/atharvahirulkar/fraud-lens.git
+cd fraud-lens
 pip install -r requirements.txt
 
 # 2. Download dataset (place in data/raw/)
@@ -348,7 +371,7 @@ pip install -r requirements.txt
 # 3. Run training experiments
 python src/train/train.py
 mlflow ui --port 5000
-# Open http://localhost:5000 - compare XGBoost vs LightGBM runs
+# Open http://localhost:5000 - compare runs
 
 # 4. Start Qdrant and ingest fraud patterns
 docker run -d -p 6333:6333 qdrant/qdrant
@@ -382,18 +405,22 @@ curl http://localhost:8000/health
 
 ---
 
-## Performance Targets
+## Performance (measured)
 
-| Metric | Target |
-|---|---|
-| AUC-PR (imbalanced test set) | > 0.88 |
-| AUC-ROC | > 0.92 |
-| p50 inference latency (local) | < 20ms |
-| p99 inference latency (Cloud Run, warm) | < 80ms |
-| Explanation generation latency | < 2s |
-| Airflow DAG daily run time | < 5 min |
+Measured 2026-10-13 on Cloud Run (us-central1, 1 vCPU / 2 GiB, max 2 instances), `POST /predict`, warm instance:
 
-*Targets for Cloud Run (us-central1, 1 vCPU / 2 GiB). Cold starts after scale-to-zero add ~10-20 s to the first request.*
+| Metric | Target | Measured |
+|---|---|---|
+| p50 latency, server-side (Cloud Monitoring, 1 client, 500 req) | — | **160 ms** |
+| p95 latency, server-side | — | **215 ms** |
+| p99 latency, server-side | < 80 ms | **468 ms** ✗ |
+| p99 latency, client-side incl. network (keep-alive) | — | 553 ms |
+| p99 under 10 concurrent clients (1,000 req) | — | 2.1 s, ~11 req/s, 9 HTTP 500s while scaling |
+| `/explain` (SHAP + retrieval + GPT-4o-mini) | < 2 s | ~16 s ✗ |
+| AUC-PR / AUC-ROC (deployed model) | > 0.88 / > 0.92 | 0.688 / 0.951 |
+| Airflow DAG run (200 txns, GCS → API → BigQuery) | < 5 min | ~60 s |
+
+Inference is CPU-bound and runs inside an `async` endpoint, so one instance effectively serves one request at a time. Cold starts after scale-to-zero add ~10-20 s.
 
 ---
 
@@ -401,7 +428,7 @@ curl http://localhost:8000/health
 
 - [x] EDA notebook (`01_eda.ipynb`)
 - [x] Feature engineering pipeline (`src/train/features.py`)
-- [x] MLflow experiment runs - XGBoost + LightGBM (20+ configs)
+- [x] MLflow experiment runs - XGBoost configs (LightGBM supported, not yet run)
 - [x] Threshold tuning + SHAP (`src/train/evaluate.py`)
 - [x] FastAPI service + Pydantic schemas
 - [x] MLflow model registry integration (`src/api/predictor.py`)
