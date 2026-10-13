@@ -1,0 +1,36 @@
+# Versions pinned to match the environment the registered model was trained in
+# (MLmodel: mlflow 3.11.1 / xgboost 3.2.0; pipeline.pkl pickled with numpy 2 + pandas 2.3)
+# so that serialized model artifacts (XGBoost, sklearn pipeline) deserialize correctly.
+
+# - Core data
+pandas==2.3.3
+numpy==2.4.4
+pyarrow==23.0.1
+
+# - ML / models
+scikit-learn==1.8.0
+# Linux (Docker/Cloud Run): CPU-only wheel, same `xgboost` module without the 350 MB NCCL GPU lib.
+# xgboost-cpu has no macOS wheels; the regular macOS wheel has no CUDA anyway.
+xgboost-cpu==3.2.0; sys_platform == "linux"
+xgboost==3.2.0; sys_platform != "linux"
+lightgbm==4.6.0
+shap==0.51.0
+
+# - Experiment tracking
+mlflow==3.11.1
+
+# - API
+fastapi==0.136.0
+uvicorn[standard]>=0.30.1
+pydantic==2.13.3
+
+# - RAG / vector store
+sentence-transformers==3.4.1
+qdrant-client==1.9.1
+
+# - LLM explanation (OpenAI)
+openai>=1.35.0
+
+# - HTTP (Ollama fallback)
+requests>=2.31.0
+

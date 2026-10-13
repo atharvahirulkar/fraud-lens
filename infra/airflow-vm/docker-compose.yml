@@ -1,0 +1,48 @@
+# Airflow on the FraudLens Compute Engine VM.
+# Written to /opt/fraudlens-airflow/ by startup.sh; values come from .env next to it.
+#
+# Single-node "standalone" Airflow (scheduler + webserver + SQLite) is plenty
+# for one daily DAG. The UI binds to localhost only — reach it over an IAP
+# SSH tunnel (see create-vm.sh output), never via a public port.
+
+services:
+  airflow:
+    image: apache/airflow:2.9.2-python3.11
+    container_name: airflow
+    command: standalone
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
+      # Empty Google connection → Application Default Credentials from the
+      # VM's metadata server (the fraudlens-airflow service account)
+      AIRFLOW_CONN_GOOGLE_CLOUD_DEFAULT: "google-cloud-platform://"
+      GCS_BUCKET: ${GCS_BUCKET}
+      GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+      BQ_DATASET: ${BQ_DATASET:-fraudlens}
+      BQ_LOCATION: ${BQ_LOCATION:-us-central1}
+      API_ENDPOINT: ${API_ENDPOINT}
+    volumes:
+      - airflow-home:/opt/airflow
+      - ./dags:/opt/airflow/dags:ro
+
+  # Pulls DAGs from gs://<bucket>/dags every 2 min, so a push to main
+  # (GitHub Actions sync-dags job) reaches the scheduler without SSH.
+  dag-sync:
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:stable
+    container_name: dag-sync
+    restart: unless-stopped
+    volumes:
+      - ./dags:/dags
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        while true; do
+          gcloud storage rsync -r --delete-unmatched-destination-objects gs://${GCS_BUCKET}/dags /dags || true
+          sleep 120
+        done
+
+volumes:
+  airflow-home:
