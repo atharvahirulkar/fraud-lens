@@ -307,8 +307,10 @@ Results (Gemini 2.5 Flash, temperature 0, "today" pinned to 2026-10-14):
 
 | Run | Answer accuracy | Skill routing | Mean latency |
 |---|---|---|---|
-| 20 questions × 1 | **20/20 (100%)** | 18/20 (90%) | 8.6 s |
-| 20 questions × 3 (consistency) | **59/60 (98.3%)** | 56/60 (93.3%) | 8.7 s |
+| [20 questions × 1](agent/evals/results/20261013-160150-8c5055.json) | **20/20 (100%)** | 18/20 (90%) | 8.6 s |
+| [20 questions × 3 (consistency)](agent/evals/results/20261013-161117-0e2a03.json) | **59/60 (98.3%)** | 56/60 (93.3%) | 8.7 s |
+
+Each linked run log has the question, expected answer, agent answer, skills loaded and every tool call with its arguments.
 
 The one failed run was a Vertex AI `429 RESOURCE_EXHAUSTED`, not a wrong answer; the agent now retries 429/5xx with backoff. The consistent routing miss is "highest fraud score in the last 30 days", which the agent answers correctly through `ad-hoc-sql` instead of `fraud-kpis`.
 

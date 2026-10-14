@@ -1,1 +1,3 @@
-evals/results/
+evals/results/*
+!evals/results/20261013-160150-8c5055.json
+!evals/results/20261013-161117-0e2a03.json

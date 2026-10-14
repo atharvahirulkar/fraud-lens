@@ -1,0 +1,2062 @@
+{
+  "summary": {
+    "model": "gemini-2.5-flash",
+    "reference_date": "2026-10-14",
+    "cases": 20,
+    "runs": 60,
+    "answer_accuracy": 0.9833,
+    "routing_accuracy": 0.9333,
+    "mean_latency_s": 8.66
+  },
+  "results": [
+    {
+      "id": "kpi_txn_count_last_week",
+      "attempt": 0,
+      "question": "How many transactions were scored last week?",
+      "passed": true,
+      "expected": "2477",
+      "answer": "There were 2477 transactions scored last week (2026-10-07 to 2026-10-13).",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "end_date": "2026-10-13",
+            "start_date": "2026-10-07",
+            "include_daily": false
+          }
+        }
+      ],
+      "latency_s": 7.07
+    },
+    {
+      "id": "kpi_txn_count_last_week",
+      "attempt": 1,
+      "question": "How many transactions were scored last week?",
+      "passed": true,
+      "expected": "2477",
+      "answer": "Last week, from 2026-10-07 to 2026-10-13, 2,477 transactions were scored.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "include_daily": false,
+            "start_date": "2026-10-07",
+            "end_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 8.6
+    },
+    {
+      "id": "kpi_txn_count_last_week",
+      "attempt": 2,
+      "question": "How many transactions were scored last week?",
+      "passed": true,
+      "expected": "2477",
+      "answer": "Last week, from 2026-10-07 to 2026-10-13, 2,477 transactions were scored.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "include_daily": false,
+            "end_date": "2026-10-13",
+            "start_date": "2026-10-07"
+          }
+        }
+      ],
+      "latency_s": 8.83
+    },
+    {
+      "id": "kpi_fraud_rate_last_week",
+      "attempt": 0,
+      "question": "What was the fraud rate last week?",
+      "passed": true,
+      "expected": "0.0, 0.06378683891804603",
+      "answer": "Fraud rate (model flags) for 2026-10-07 to 2026-10-13 was 0.00% (0 of 2477); high-risk rate was 6.38% (158 transactions).",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "include_daily": false,
+            "start_date": "2026-10-07",
+            "end_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 7.18
+    },
+    {
+      "id": "kpi_fraud_rate_last_week",
+      "attempt": 1,
+      "question": "What was the fraud rate last week?",
+      "passed": true,
+      "expected": "0.0, 0.06378683891804603",
+      "answer": "Fraud rate (model flags) for 2026-10-07 to 2026-10-13 was 0.00% (0 of 2477); high-risk rate was 6.38% (158 transactions).",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "start_date": "2026-10-07",
+            "include_daily": false,
+            "end_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 7.54
+    },
+    {
+      "id": "kpi_fraud_rate_last_week",
+      "attempt": 2,
+      "question": "What was the fraud rate last week?",
+      "passed": true,
+      "expected": "0.0, 0.06378683891804603",
+      "answer": "Fraud rate (model flags) for 2026-10-07 to 2026-10-13 was 0.00% (0 of 2477); high-risk rate was 6.38% (158 transactions).",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "end_date": "2026-10-13",
+            "start_date": "2026-10-07",
+            "include_daily": false
+          }
+        }
+      ],
+      "latency_s": 8.1
+    },
+    {
+      "id": "kpi_high_risk_rate_yesterday",
+      "attempt": 0,
+      "question": "What share of yesterday's transactions were high-risk?",
+      "passed": false,
+      "expected": "0.07033639143730887",
+      "answer": "<error: \nOn how to mitigate this issue, please refer to:\n\nhttps://google.github.io/adk-docs/agents/models/google-gemini/#error-code-429-resource_exhausted\n\n\n429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}>",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [],
+      "routed": false,
+      "tools": [],
+      "calls": [],
+      "latency_s": null
+    },
+    {
+      "id": "kpi_high_risk_rate_yesterday",
+      "attempt": 1,
+      "question": "What share of yesterday's transactions were high-risk?",
+      "passed": true,
+      "expected": "0.07033639143730887",
+      "answer": "The high-risk rate for 2026-10-13 was 7.03% (23 of 327 transactions).",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "include_daily": false,
+            "start_date": "2026-10-13",
+            "end_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 6.63
+    },
+    {
+      "id": "kpi_high_risk_rate_yesterday",
+      "attempt": 2,
+      "question": "What share of yesterday's transactions were high-risk?",
+      "passed": true,
+      "expected": "0.07033639143730887",
+      "answer": "The high-risk rate for 2026-10-13 was 7.03% (23 of 327 transactions).",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "end_date": "2026-10-13",
+            "include_daily": false,
+            "start_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 8.18
+    },
+    {
+      "id": "kpi_avg_score_last_week",
+      "attempt": 0,
+      "question": "What was the average fraud score last week?",
+      "passed": true,
+      "expected": "0.051841781551539484",
+      "answer": "The average fraud score for 2026-10-07 to 2026-10-13 was 0.0518.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "start_date": "2026-10-07",
+            "end_date": "2026-10-13",
+            "include_daily": false
+          }
+        }
+      ],
+      "latency_s": 7.09
+    },
+    {
+      "id": "kpi_avg_score_last_week",
+      "attempt": 1,
+      "question": "What was the average fraud score last week?",
+      "passed": true,
+      "expected": "0.051841781551539484",
+      "answer": "The average fraud score for 2026-10-07 to 2026-10-13 was 0.0518.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "start_date": "2026-10-07",
+            "end_date": "2026-10-13",
+            "include_daily": false
+          }
+        }
+      ],
+      "latency_s": 6.9
+    },
+    {
+      "id": "kpi_avg_score_last_week",
+      "attempt": 2,
+      "question": "What was the average fraud score last week?",
+      "passed": true,
+      "expected": "0.051841781551539484",
+      "answer": "The average fraud score for 2026-10-07 to 2026-10-13 was 0.0518.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "end_date": "2026-10-13",
+            "include_daily": false,
+            "start_date": "2026-10-07"
+          }
+        }
+      ],
+      "latency_s": 6.6
+    },
+    {
+      "id": "kpi_high_risk_amount_last_week",
+      "attempt": 0,
+      "question": "How many dollars went through high-risk transactions last week?",
+      "passed": true,
+      "expected": "64413.67999999999",
+      "answer": "Last week (2026-10-07 to 2026-10-13), $64,413.68 went through high-risk transactions.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "end_date": "2026-10-13",
+            "include_daily": false,
+            "start_date": "2026-10-07"
+          }
+        }
+      ],
+      "latency_s": 6.93
+    },
+    {
+      "id": "kpi_high_risk_amount_last_week",
+      "attempt": 1,
+      "question": "How many dollars went through high-risk transactions last week?",
+      "passed": true,
+      "expected": "64413.67999999999",
+      "answer": "Last week (2026-10-07 to 2026-10-13), $64,413.68 went through high-risk transactions.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "start_date": "2026-10-07",
+            "end_date": "2026-10-13",
+            "include_daily": false
+          }
+        }
+      ],
+      "latency_s": 6.85
+    },
+    {
+      "id": "kpi_high_risk_amount_last_week",
+      "attempt": 2,
+      "question": "How many dollars went through high-risk transactions last week?",
+      "passed": true,
+      "expected": "64413.67999999999",
+      "answer": "$64,413.68 went through high-risk transactions from 2026-10-07 to 2026-10-13.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "include_daily": false,
+            "end_date": "2026-10-13",
+            "start_date": "2026-10-07"
+          }
+        }
+      ],
+      "latency_s": 7.49
+    },
+    {
+      "id": "kpi_worst_day_two_weeks",
+      "attempt": 0,
+      "question": "Which day in the last two weeks had the highest high-risk rate?",
+      "passed": true,
+      "expected": "2026-10-03",
+      "answer": "On 2026-10-03, the high-risk rate was 9.55% (30 high-risk transactions out of 314 total transactions), which was the highest in the last two weeks (2026-09-30 to 2026-10-13).",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "include_daily": true,
+            "start_date": "2026-09-30",
+            "end_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 8.49
+    },
+    {
+      "id": "kpi_worst_day_two_weeks",
+      "attempt": 1,
+      "question": "Which day in the last two weeks had the highest high-risk rate?",
+      "passed": true,
+      "expected": "2026-10-03",
+      "answer": "On 2026-10-03, the high-risk rate was 9.55% (30 of 314 transactions), which was the highest in the last two weeks (2026-09-30 to 2026-10-13).",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "include_daily": true,
+            "start_date": "2026-09-30",
+            "end_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 8.8
+    },
+    {
+      "id": "kpi_worst_day_two_weeks",
+      "attempt": 2,
+      "question": "Which day in the last two weeks had the highest high-risk rate?",
+      "passed": true,
+      "expected": "2026-10-03",
+      "answer": "The day with the highest high-risk rate in the last two weeks (2026-09-30 to 2026-10-13) was 2026-10-03, with a high-risk rate of 9.55%.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "include_daily": true,
+            "start_date": "2026-09-30",
+            "end_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 9.74
+    },
+    {
+      "id": "kpi_week_over_week",
+      "attempt": 0,
+      "question": "How did the high-risk rate last week compare with the week before?",
+      "passed": true,
+      "expected": "0.06378683891804603, 0.06890459363957598",
+      "answer": "The high-risk rate for 2026-10-07 to 2026-10-13 was 6.38% (158 of 2477 transactions). This is a decrease of 0.51 percentage points compared to the previous week (2026-09-30 to 2026-10-06), which had a high-risk rate of 6.89% (156 of 2264 transactions).",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics",
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "include_daily": false,
+            "start_date": "2026-10-07",
+            "end_date": "2026-10-13"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "include_daily": false,
+            "end_date": "2026-10-06",
+            "start_date": "2026-09-30"
+          }
+        }
+      ],
+      "latency_s": 8.87
+    },
+    {
+      "id": "kpi_week_over_week",
+      "attempt": 1,
+      "question": "How did the high-risk rate last week compare with the week before?",
+      "passed": true,
+      "expected": "0.06378683891804603, 0.06890459363957598",
+      "answer": "The high-risk rate for 2026-10-07 to 2026-10-13 was 6.38% (158 of 2477 transactions). This is a decrease of 0.51 percentage points compared to the previous week (2026-09-30 to 2026-10-06), which had a high-risk rate of 6.89% (156 of 2264 transactions).",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics",
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "start_date": "2026-10-07",
+            "include_daily": false,
+            "end_date": "2026-10-13"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "include_daily": false,
+            "start_date": "2026-09-30",
+            "end_date": "2026-10-06"
+          }
+        }
+      ],
+      "latency_s": 9.67
+    },
+    {
+      "id": "kpi_week_over_week",
+      "attempt": 2,
+      "question": "How did the high-risk rate last week compare with the week before?",
+      "passed": true,
+      "expected": "0.06378683891804603, 0.06890459363957598",
+      "answer": "The high-risk rate for last week (2026-10-07 to 2026-10-13) was 6.38%, compared to 6.89% for the week before (2026-09-30 to 2026-10-06). This is a decrease of 0.51 percentage points.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "fraud-kpis"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics",
+        "get_fraud_metrics"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "end_date": "2026-10-13",
+            "start_date": "2026-10-07"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "start_date": "2026-09-30",
+            "end_date": "2026-10-06"
+          }
+        }
+      ],
+      "latency_s": 9.23
+    },
+    {
+      "id": "kpi_max_score_30d",
+      "attempt": 0,
+      "question": "What was the highest fraud score we saw in the last 30 days?",
+      "passed": true,
+      "expected": "0.7521421313285828",
+      "answer": "The highest fraud score in the last 30 days (2026-09-14 to 2026-10-13) was 0.7521.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": false,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT MAX(fraud_score) FROM scored WHERE dt BETWEEN '2026-09-14' AND '2026-10-13'"
+          }
+        }
+      ],
+      "latency_s": 7.68
+    },
+    {
+      "id": "kpi_max_score_30d",
+      "attempt": 1,
+      "question": "What was the highest fraud score we saw in the last 30 days?",
+      "passed": true,
+      "expected": "0.7521421313285828",
+      "answer": "The highest fraud score in the last 30 days (2026-09-14 to 2026-10-13) was 0.7521.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": false,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT MAX(fraud_score) FROM scored WHERE dt BETWEEN '2026-09-14' AND '2026-10-13'"
+          }
+        }
+      ],
+      "latency_s": 7.37
+    },
+    {
+      "id": "kpi_max_score_30d",
+      "attempt": 2,
+      "question": "What was the highest fraud score we saw in the last 30 days?",
+      "passed": true,
+      "expected": "0.7521421313285828",
+      "answer": "The highest fraud score in the last 30 days (2026-09-14 to 2026-10-13) was 0.7521.",
+      "expected_skill": "fraud-kpis",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": false,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT MAX(fraud_score) FROM scored WHERE dt BETWEEN '2026-09-14' AND '2026-10-13'"
+          }
+        }
+      ],
+      "latency_s": 7.31
+    },
+    {
+      "id": "seg_top_merchant_30d",
+      "attempt": 0,
+      "question": "Which merchant had the most high-risk transactions in the last 30 days?",
+      "passed": true,
+      "expected": "GiftCard Hub (149), QuickVolt Electronics (146)",
+      "answer": "In the last 30 days (2026-09-14 to 2026-10-13), ranked by high-risk transactions:\n1. GiftCard Hub - 149 high-risk of 434 (34.33%)",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "end_date": "2026-10-13",
+            "rank_by": "high_risk",
+            "dimension": "merchant",
+            "start_date": "2026-09-14"
+          }
+        }
+      ],
+      "latency_s": 7.44
+    },
+    {
+      "id": "seg_top_merchant_30d",
+      "attempt": 1,
+      "question": "Which merchant had the most high-risk transactions in the last 30 days?",
+      "passed": true,
+      "expected": "GiftCard Hub (149), QuickVolt Electronics (146)",
+      "answer": "In the last 30 days (2026-09-14 to 2026-10-13), ranked by high-risk transactions:\n\n1. GiftCard Hub - 149 high-risk of 434 transactions (34.33%)",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "start_date": "2026-09-14",
+            "rank_by": "high_risk",
+            "dimension": "merchant",
+            "end_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 6.96
+    },
+    {
+      "id": "seg_top_merchant_30d",
+      "attempt": 2,
+      "question": "Which merchant had the most high-risk transactions in the last 30 days?",
+      "passed": true,
+      "expected": "GiftCard Hub (149), QuickVolt Electronics (146)",
+      "answer": "In the last 30 days (2026-09-14 to 2026-10-13), ranked by high-risk transactions:\n1. GiftCard Hub - 149 high-risk of 434 (34.33%)",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "dimension": "merchant",
+            "rank_by": "high_risk",
+            "start_date": "2026-09-14",
+            "end_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 11.57
+    },
+    {
+      "id": "seg_top3_flagged_merchants_last_week",
+      "attempt": 0,
+      "question": "What were the top 3 flagged merchants last week?",
+      "passed": true,
+      "expected": "QuickVolt Electronics (44), CoinSwap Exchange (43), GiftCard Hub (40), LuxeTime Watches (17)",
+      "answer": "For the week of 2026-10-07 to 2026-10-13, ranked by high-risk count:\n1. QuickVolt Electronics - 44 high-risk of 199 transactions (22.11%)\n2. CoinSwap Exchange - 43 high-risk of 105 transactions (40.95%)\n3. GiftCard Hub - 40 high-risk of 122 transactions (32.79%)",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "start_date": "2026-10-07",
+            "rank_by": "high_risk",
+            "dimension": "merchant",
+            "limit": 3,
+            "end_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 10.02
+    },
+    {
+      "id": "seg_top3_flagged_merchants_last_week",
+      "attempt": 1,
+      "question": "What were the top 3 flagged merchants last week?",
+      "passed": true,
+      "expected": "QuickVolt Electronics (44), CoinSwap Exchange (43), GiftCard Hub (40), LuxeTime Watches (17)",
+      "answer": "Here are the top 3 flagged merchants from 2026-10-07 to 2026-10-13, ranked by high-risk count:\n\n1. QuickVolt Electronics - 44 high-risk of 199 transactions (22.11%)\n2. CoinSwap Exchange - 43 high-risk of 105 transactions (40.95%)\n3. GiftCard Hub - 40 high-risk of 122 transactions (32.79%)",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "start_date": "2026-10-07",
+            "end_date": "2026-10-13",
+            "limit": 3,
+            "rank_by": "high_risk",
+            "dimension": "merchant"
+          }
+        }
+      ],
+      "latency_s": 8.54
+    },
+    {
+      "id": "seg_top3_flagged_merchants_last_week",
+      "attempt": 2,
+      "question": "What were the top 3 flagged merchants last week?",
+      "passed": true,
+      "expected": "QuickVolt Electronics (44), CoinSwap Exchange (43), GiftCard Hub (40), LuxeTime Watches (17)",
+      "answer": "For the week of 2026-10-07 to 2026-10-13, ranked by high-risk count:\n1. QuickVolt Electronics - 44 high-risk of 199 transactions (22.11%)\n2. CoinSwap Exchange - 43 high-risk of 105 transactions (40.95%)\n3. GiftCard Hub - 40 high-risk of 122 transactions (32.79%)",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "end_date": "2026-10-13",
+            "rank_by": "high_risk",
+            "limit": 3,
+            "start_date": "2026-10-07",
+            "dimension": "merchant"
+          }
+        }
+      ],
+      "latency_s": 8.95
+    },
+    {
+      "id": "seg_category_avg_score_two_weeks",
+      "attempt": 0,
+      "question": "Which merchant category had the highest average fraud score over the last 2 weeks?",
+      "passed": true,
+      "expected": "crypto (0.2031), gift_cards (0.1783)",
+      "answer": "Over the last 2 weeks (2026-09-30 to 2026-10-13), ranked by average fraud score:\n1. crypto - 0.2031 average score of 196 transactions.",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "limit": 1,
+            "start_date": "2026-09-30",
+            "end_date": "2026-10-13",
+            "dimension": "merchant_category",
+            "rank_by": "avg_score"
+          }
+        }
+      ],
+      "latency_s": 8.23
+    },
+    {
+      "id": "seg_category_avg_score_two_weeks",
+      "attempt": 1,
+      "question": "Which merchant category had the highest average fraud score over the last 2 weeks?",
+      "passed": true,
+      "expected": "crypto (0.2031), gift_cards (0.1783)",
+      "answer": "Over the last 2 weeks (2026-09-30 to 2026-10-13), the merchant category with the highest average fraud score was:\n\n1. crypto - 0.2031 avg_score (196 transactions)",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "rank_by": "avg_score",
+            "end_date": "2026-10-13",
+            "dimension": "merchant_category",
+            "limit": 1,
+            "start_date": "2026-09-30"
+          }
+        }
+      ],
+      "latency_s": 7.38
+    },
+    {
+      "id": "seg_category_avg_score_two_weeks",
+      "attempt": 2,
+      "question": "Which merchant category had the highest average fraud score over the last 2 weeks?",
+      "passed": true,
+      "expected": "crypto (0.2031), gift_cards (0.1783)",
+      "answer": "Over the last 2 weeks (2026-09-30 to 2026-10-13), the merchant category with the highest average fraud score was:\n\n1. crypto - 0.203142 average score (196 transactions)",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "start_date": "2026-09-30",
+            "limit": 1,
+            "dimension": "merchant_category",
+            "rank_by": "avg_score",
+            "end_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 6.93
+    },
+    {
+      "id": "seg_credit_vs_debit_30d",
+      "attempt": 0,
+      "question": "Compare the high-risk rate for credit versus debit cards over the last 30 days.",
+      "passed": true,
+      "expected": "0.14198473282442747, 0.030338389731621937",
+      "answer": "Over the last 30 days (2026-09-14 to 2026-10-13):\n1. Credit cards had a high-risk rate of 14.20% (372 high-risk of 2620 transactions).\n2. Debit cards had a high-risk rate of 3.03% (156 high-risk of 5142 transactions).",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "end_date": "2026-10-13",
+            "limit": 10,
+            "rank_by": "high_risk_rate",
+            "start_date": "2026-09-14",
+            "dimension": "card_type"
+          }
+        }
+      ],
+      "latency_s": 7.47
+    },
+    {
+      "id": "seg_credit_vs_debit_30d",
+      "attempt": 1,
+      "question": "Compare the high-risk rate for credit versus debit cards over the last 30 days.",
+      "passed": true,
+      "expected": "0.14198473282442747, 0.030338389731621937",
+      "answer": "Over the last 30 days (2026-09-14 to 2026-10-13):\n\n*   **Credit cards** had a high-risk rate of 14.20% (372 high-risk transactions out of 2,620 total transactions).\n*   **Debit cards** had a high-risk rate of 3.03% (156 high-risk transactions out of 5,142 total transactions).",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "start_date": "2026-09-14",
+            "limit": 10,
+            "end_date": "2026-10-13",
+            "dimension": "card_type",
+            "rank_by": "high_risk_rate"
+          }
+        }
+      ],
+      "latency_s": 7.66
+    },
+    {
+      "id": "seg_credit_vs_debit_30d",
+      "attempt": 2,
+      "question": "Compare the high-risk rate for credit versus debit cards over the last 30 days.",
+      "passed": true,
+      "expected": "0.14198473282442747, 0.030338389731621937",
+      "answer": "Over the last 30 days (2026-09-14 to 2026-10-13):\n1. Credit cards had a high-risk rate of 14.20% (372 high-risk of 2620 transactions).\n2. Debit cards had a high-risk rate of 3.03% (156 high-risk of 5142 transactions).",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "limit": 10,
+            "dimension": "card_type",
+            "end_date": "2026-10-13",
+            "rank_by": "high_risk_rate",
+            "start_date": "2026-09-14"
+          }
+        }
+      ],
+      "latency_s": 7.17
+    },
+    {
+      "id": "seg_email_domain_min_volume",
+      "attempt": 0,
+      "question": "Among payer email domains with at least 100 transactions in the last 30 days, which has the highest high-risk rate?",
+      "passed": true,
+      "expected": "mail.com (0.4579), protonmail.com (0.3117)",
+      "answer": "Among payer email domains with at least 100 transactions in the last 30 days (2026-09-14 to 2026-10-13), mail.com had the highest high-risk rate at 45.79% (250 high-risk transactions out of 546 total transactions).",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "dimension": "payer_email_domain",
+            "min_transactions": 100,
+            "start_date": "2026-09-14",
+            "rank_by": "high_risk_rate",
+            "end_date": "2026-10-13",
+            "limit": 1
+          }
+        }
+      ],
+      "latency_s": 7.35
+    },
+    {
+      "id": "seg_email_domain_min_volume",
+      "attempt": 1,
+      "question": "Among payer email domains with at least 100 transactions in the last 30 days, which has the highest high-risk rate?",
+      "passed": true,
+      "expected": "mail.com (0.4579), protonmail.com (0.3117)",
+      "answer": "Among payer email domains with at least 100 transactions in the last 30 days (2026-09-14 to 2026-10-13), mail.com had the highest high-risk rate at 45.79% (250 high-risk transactions out of 546 total transactions).",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "min_transactions": 100,
+            "rank_by": "high_risk_rate",
+            "end_date": "2026-10-13",
+            "dimension": "payer_email_domain",
+            "start_date": "2026-09-14",
+            "limit": 1
+          }
+        }
+      ],
+      "latency_s": 7.55
+    },
+    {
+      "id": "seg_email_domain_min_volume",
+      "attempt": 2,
+      "question": "Among payer email domains with at least 100 transactions in the last 30 days, which has the highest high-risk rate?",
+      "passed": true,
+      "expected": "mail.com (0.4579), protonmail.com (0.3117)",
+      "answer": "Among payer email domains with at least 100 transactions in the last 30 days (2026-09-14 to 2026-10-13), mail.com had the highest high-risk rate at 45.79% (250 high-risk transactions out of 546 total transactions).",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "start_date": "2026-09-14",
+            "end_date": "2026-10-13",
+            "rank_by": "high_risk_rate",
+            "limit": 1,
+            "min_transactions": 100,
+            "dimension": "payer_email_domain"
+          }
+        }
+      ],
+      "latency_s": 7.68
+    },
+    {
+      "id": "seg_product_last_week",
+      "attempt": 0,
+      "question": "Which product code had the most high-risk transactions last week?",
+      "passed": true,
+      "expected": "C (56), H (54)",
+      "answer": "For the week of 2026-10-07 to 2026-10-13, ranked by high-risk transactions:\n1. C - 56 high-risk of 335 (0.17%)\n2. H - 54 high-risk of 248 (0.22%)\n3. W - 30 high-risk of 1492 (0.02%)\n4. R - 9 high-risk of 207 (0.04%)\n5. S - 9 high-risk of 195 (0.05%)",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "end_date": "2026-10-13",
+            "start_date": "2026-10-07",
+            "limit": 10,
+            "rank_by": "high_risk",
+            "dimension": "product_cd"
+          }
+        }
+      ],
+      "latency_s": 8.75
+    },
+    {
+      "id": "seg_product_last_week",
+      "attempt": 1,
+      "question": "Which product code had the most high-risk transactions last week?",
+      "passed": true,
+      "expected": "C (56), H (54)",
+      "answer": "For the period 2026-10-07 to 2026-10-13, the product code with the most high-risk transactions was:\n\n1.  Product Code C - 56 high-risk of 335 transactions (16.72%)\n\nThis was ranked by high-risk transaction count.",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "rank_by": "high_risk",
+            "limit": 10,
+            "dimension": "product_cd",
+            "start_date": "2026-10-07",
+            "end_date": "2026-10-13"
+          }
+        }
+      ],
+      "latency_s": 8.04
+    },
+    {
+      "id": "seg_product_last_week",
+      "attempt": 2,
+      "question": "Which product code had the most high-risk transactions last week?",
+      "passed": true,
+      "expected": "C (56), H (54)",
+      "answer": "For the week of 2026-10-07 to 2026-10-13, ranked by high-risk transactions:\n\n1. Product Code C - 56 high-risk of 335 transactions (16.72%)",
+      "expected_skill": "risk-segments",
+      "skills_loaded": [
+        "risk-segments"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "dimension": "product_cd",
+            "end_date": "2026-10-13",
+            "limit": 1,
+            "start_date": "2026-10-07",
+            "rank_by": "high_risk"
+          }
+        }
+      ],
+      "latency_s": 6.77
+    },
+    {
+      "id": "sql_distinct_merchants_last_week",
+      "attempt": 0,
+      "question": "How many different merchants had transactions last week?",
+      "passed": true,
+      "expected": "12",
+      "answer": "Last week (2026-10-07 to 2026-10-13), there were 12 different merchants with transactions.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT COUNT(DISTINCT merchant) FROM scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13'"
+          }
+        }
+      ],
+      "latency_s": 6.79
+    },
+    {
+      "id": "sql_distinct_merchants_last_week",
+      "attempt": 1,
+      "question": "How many different merchants had transactions last week?",
+      "passed": true,
+      "expected": "12",
+      "answer": "Last week (2026-10-07 to 2026-10-13), there were 12 different merchants with transactions.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT COUNT(DISTINCT merchant) FROM scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13'"
+          }
+        }
+      ],
+      "latency_s": 7.48
+    },
+    {
+      "id": "sql_distinct_merchants_last_week",
+      "attempt": 2,
+      "question": "How many different merchants had transactions last week?",
+      "passed": true,
+      "expected": "12",
+      "answer": "Last week (2026-10-07 to 2026-10-13), there were 12 different merchants with transactions.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT COUNT(DISTINCT merchant) FROM scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13'"
+          }
+        }
+      ],
+      "latency_s": 7.06
+    },
+    {
+      "id": "sql_merchant_on_day",
+      "attempt": 0,
+      "question": "How many high-risk transactions did GiftCard Hub have on October 12?",
+      "passed": true,
+      "expected": "6",
+      "answer": "GiftCard Hub had 6 high-risk transactions on 2026-10-12.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT COUNTIF(fraud_score >= 0.20) AS high_risk FROM scored WHERE dt = '2026-10-12' AND merchant = 'GiftCard Hub'"
+          }
+        }
+      ],
+      "latency_s": 8.08
+    },
+    {
+      "id": "sql_merchant_on_day",
+      "attempt": 1,
+      "question": "How many high-risk transactions did GiftCard Hub have on October 12?",
+      "passed": true,
+      "expected": "6",
+      "answer": "GiftCard Hub had 6 high-risk transactions on 2026-10-12.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT COUNTIF(fraud_score >= 0.20) FROM scored WHERE dt = '2026-10-12' AND merchant = 'GiftCard Hub'"
+          }
+        }
+      ],
+      "latency_s": 8.74
+    },
+    {
+      "id": "sql_merchant_on_day",
+      "attempt": 2,
+      "question": "How many high-risk transactions did GiftCard Hub have on October 12?",
+      "passed": true,
+      "expected": "6",
+      "answer": "GiftCard Hub had 6 high-risk transactions on 2026-10-12.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT COUNT(*) AS n, COUNTIF(fraud_score >= 0.20) AS high_risk FROM scored WHERE dt = '2026-10-12' AND merchant = 'GiftCard Hub'"
+          }
+        }
+      ],
+      "latency_s": 7.56
+    },
+    {
+      "id": "sql_over_1000_last_week",
+      "attempt": 0,
+      "question": "How many transactions over $1,000 were there last week?",
+      "passed": true,
+      "expected": "52",
+      "answer": "There were 52 transactions over $1,000 last week (2026-10-07 to 2026-10-13).",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT COUNT(*) FROM scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13' AND transaction_amt > 1000"
+          }
+        }
+      ],
+      "latency_s": 7.25
+    },
+    {
+      "id": "sql_over_1000_last_week",
+      "attempt": 1,
+      "question": "How many transactions over $1,000 were there last week?",
+      "passed": true,
+      "expected": "52",
+      "answer": "There were 52 transactions over $1,000 last week (2026-10-07 to 2026-10-13).",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT COUNT(*) FROM scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13' AND transaction_amt > 1000"
+          }
+        }
+      ],
+      "latency_s": 7.87
+    },
+    {
+      "id": "sql_over_1000_last_week",
+      "attempt": 2,
+      "question": "How many transactions over $1,000 were there last week?",
+      "passed": true,
+      "expected": "52",
+      "answer": "There were 52 transactions over $1,000 last week (2026-10-07 to 2026-10-13).",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT COUNT(*) FROM scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13' AND transaction_amt > 1000"
+          }
+        }
+      ],
+      "latency_s": 8.23
+    },
+    {
+      "id": "sql_protonmail_share_30d",
+      "attempt": 0,
+      "question": "What percentage of high-risk transactions in the last 30 days came from protonmail.com payers?",
+      "passed": true,
+      "expected": "0.2821969696969697",
+      "answer": "28.22% of high-risk transactions in the last 30 days (2026-09-14 to 2026-10-13) came from protonmail.com payers.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "risk-segments",
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments",
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "end_date": "2026-10-13",
+            "dimension": "payer_email_domain",
+            "rank_by": "high_risk",
+            "limit": 50,
+            "start_date": "2026-09-14"
+          }
+        },
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT COUNT(*) FROM scored WHERE dt BETWEEN '2026-09-14' AND '2026-10-13' AND fraud_score >= 0.20"
+          }
+        }
+      ],
+      "latency_s": 18.55
+    },
+    {
+      "id": "sql_protonmail_share_30d",
+      "attempt": 1,
+      "question": "What percentage of high-risk transactions in the last 30 days came from protonmail.com payers?",
+      "passed": true,
+      "expected": "0.2821969696969697",
+      "answer": "28.22% of high-risk transactions in the last 30 days (2026-09-14 to 2026-10-13) came from protonmail.com payers.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "risk-segments",
+        "fraud-kpis",
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "get_fraud_metrics",
+        "top_segments",
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "fraud-kpis"
+          }
+        },
+        {
+          "name": "get_fraud_metrics",
+          "args": {
+            "start_date": "2026-09-14",
+            "end_date": "2026-10-13"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "rank_by": "high_risk",
+            "limit": 1,
+            "start_date": "2026-09-14",
+            "end_date": "2026-10-13",
+            "dimension": "payer_email_domain"
+          }
+        },
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT COUNTIF(p_emaildomain = 'protonmail.com' AND fraud_score >= 0.20) AS protonmail_high_risk_count FROM scored WHERE dt BETWEEN '2026-09-14' AND '2026-10-13'"
+          }
+        }
+      ],
+      "latency_s": 20.25
+    },
+    {
+      "id": "sql_protonmail_share_30d",
+      "attempt": 2,
+      "question": "What percentage of high-risk transactions in the last 30 days came from protonmail.com payers?",
+      "passed": true,
+      "expected": "0.2821969696969697",
+      "answer": "28.22% of high-risk transactions in the last 30 days (2026-09-14 to 2026-10-13) came from protonmail.com payers.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "risk-segments",
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "top_segments",
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "risk-segments"
+          }
+        },
+        {
+          "name": "top_segments",
+          "args": {
+            "rank_by": "high_risk",
+            "end_date": "2026-10-13",
+            "limit": 50,
+            "start_date": "2026-09-14",
+            "dimension": "payer_email_domain"
+          }
+        },
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT COUNT(*) FROM scored WHERE dt BETWEEN '2026-09-14' AND '2026-10-13' AND fraud_score >= 0.20"
+          }
+        }
+      ],
+      "latency_s": 17.85
+    },
+    {
+      "id": "sql_model_version_yesterday",
+      "attempt": 0,
+      "question": "Which model version scored yesterday's transactions?",
+      "passed": true,
+      "expected": "xgboost-v3",
+      "answer": "The model version that scored transactions on 2026-10-13 was xgboost-v3.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT DISTINCT model_version FROM scored WHERE dt = '2026-10-13'"
+          }
+        }
+      ],
+      "latency_s": 7.13
+    },
+    {
+      "id": "sql_model_version_yesterday",
+      "attempt": 1,
+      "question": "Which model version scored yesterday's transactions?",
+      "passed": true,
+      "expected": "xgboost-v3",
+      "answer": "The model version that scored transactions on 2026-10-13 was xgboost-v3.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT DISTINCT model_version FROM scored WHERE dt = '2026-10-13'"
+          }
+        }
+      ],
+      "latency_s": 8.94
+    },
+    {
+      "id": "sql_model_version_yesterday",
+      "attempt": 2,
+      "question": "Which model version scored yesterday's transactions?",
+      "passed": true,
+      "expected": "xgboost-v3",
+      "answer": "Yesterday's transactions were scored by model version xgboost-v3.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT DISTINCT model_version FROM scored WHERE dt = '2026-10-13'"
+          }
+        }
+      ],
+      "latency_s": 6.48
+    },
+    {
+      "id": "sql_avg_amount_merchant_last_week",
+      "attempt": 0,
+      "question": "What was the average transaction amount at LuxeTime Watches last week?",
+      "passed": true,
+      "expected": "922.8019417475728",
+      "answer": "The average transaction amount at LuxeTime Watches last week (2026-10-07 to 2026-10-13) was $922.80.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT AVG(transaction_amt) FROM scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13' AND merchant = 'LuxeTime Watches'"
+          }
+        }
+      ],
+      "latency_s": 10.32
+    },
+    {
+      "id": "sql_avg_amount_merchant_last_week",
+      "attempt": 1,
+      "question": "What was the average transaction amount at LuxeTime Watches last week?",
+      "passed": true,
+      "expected": "922.8019417475728",
+      "answer": "The average transaction amount at LuxeTime Watches last week (2026-10-07 to 2026-10-13) was $922.80.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT AVG(transaction_amt) FROM scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13' AND merchant = 'LuxeTime Watches'"
+          }
+        }
+      ],
+      "latency_s": 7.37
+    },
+    {
+      "id": "sql_avg_amount_merchant_last_week",
+      "attempt": 2,
+      "question": "What was the average transaction amount at LuxeTime Watches last week?",
+      "passed": true,
+      "expected": "922.8019417475728",
+      "answer": "The average transaction amount at LuxeTime Watches last week (2026-10-07 to 2026-10-13) was $922.80.",
+      "expected_skill": "ad-hoc-sql",
+      "skills_loaded": [
+        "ad-hoc-sql"
+      ],
+      "routed": true,
+      "tools": [
+        "run_readonly_sql"
+      ],
+      "calls": [
+        {
+          "name": "load_skill",
+          "args": {
+            "skill_name": "ad-hoc-sql"
+          }
+        },
+        {
+          "name": "run_readonly_sql",
+          "args": {
+            "query": "SELECT AVG(transaction_amt) FROM scored WHERE dt BETWEEN '2026-10-07' AND '2026-10-13' AND merchant = 'LuxeTime Watches'"
+          }
+        }
+      ],
+      "latency_s": 19.16
+    }
+  ]
+}
